@@ -25,6 +25,10 @@ struct StackItem {
 int
 array_is_empty(struct Array * array);
 
+void * array_last(struct Array * array);
+
+int array_length(struct Array * array);
+
 struct Array * array_make();
 
 int array_push(struct Array * array, void * value);
