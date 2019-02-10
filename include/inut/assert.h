@@ -1,9 +1,10 @@
-#ifndef TEST_ASSERT_H
-#define TEST_ASSERT_H
+#ifndef INUT_TEST_ASSERT_H
+#define INUT_TEST_ASSERT_H
 
 #include "inut/test_report.h"
+#include <stdio.h>
 
-#define MAX_STR 256
+#define MAX_STR 1024
 
 char buffer[MAX_STR];
 

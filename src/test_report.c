@@ -83,19 +83,19 @@ test_report_progress_bar() {
 
 void
 test_report_results(long seed, long duration) {
-    printf("• done in %ldms •\n\n", duration);
+    printf("• done in %ldµs •\n\n", duration);
 
     if (number_passed) {
-        printf (GREEN "%d of %d (%.0f%%) tests passed" RESET "\n", number_passed, number_total, (float)number_passed / (float)number_total * 100.);
+        printf (GREEN "%d of %d tests passed" RESET "\n", number_passed, number_total);
     }
     if (number_failed) {
-        printf (RED "%d of %d (%.0f%%) tests failed" RESET "\n", number_failed, number_total, (float)number_failed / (float)number_total * 100.);
+        printf (RED "%d of %d tests failed" RESET "\n", number_failed, number_total);
     }
     if (number_todo) {
-        printf (BLUE "%d of %d (%.0f%%) tests todo" RESET "\n", number_todo, number_total, (float)number_todo / (float)number_total * 100.);
+        printf (BLUE "%d of %d tests todo" RESET "\n", number_todo, number_total);
     }
     if (number_skipped) {
-        printf (YELLOW "%d of %d (%.0f%%) tests skipped" RESET "\n", number_skipped, number_total, (float)number_skipped / (float)number_total * 100.);
+        printf (YELLOW "%d of %d tests skipped" RESET "\n", number_skipped, number_total);
     }
 
     test_report_progress_bar();

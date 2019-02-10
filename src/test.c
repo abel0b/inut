@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "array/array.h"
 #include "inut/test.h"
 #include "inut/test_report.h"
@@ -41,17 +42,13 @@ test_init () {
     root->test_cases = array_make();
 }
 
-void
-test_suite(char * parent, char * name) {
+struct TestSuite *
+test_suite(struct TestSuite * suite, char * name) {
     if (root == NULL) {
         test_init();
     }
-    struct TestSuite * parent_suite = test_suite_resolve(root, parent);
 
-    if(parent_suite == NULL) {
-        printf("test suite not found\n");
-        exit(1);
-    }
+    struct TestSuite * parent_suite = (suite == NULL)? root : suite;
 
     struct TestSuite * new_suite = malloc (sizeof (struct TestSuite));
     new_suite->parent = parent_suite;
@@ -60,32 +57,42 @@ test_suite(char * parent, char * name) {
     new_suite->test_suites = array_make();
     new_suite->test_cases = array_make();
     array_push(parent_suite->test_suites, new_suite);
+    return new_suite;
 }
 
-void test_case(char * suite, char * description, struct TestResult (*test)()) {
-    struct TestSuite * parent_suite = test_suite_resolve(root, suite);
-
-    if(parent_suite == NULL) {
-        printf("test suite not found\n");
-        exit(1);
-    }
+struct TestCase *
+test_case(struct TestSuite * suite, char * description, struct TestResult (*test)()) {
+    struct TestSuite * parent_suite = (suite == NULL)? root : suite;
 
     struct TestCase * test_case = malloc (sizeof (struct TestCase));
     test_case->description = description;
     test_case->test = test;
     array_push (parent_suite->test_cases, test_case);
+    return test_case;
 }
 
-int
-test_run () {
+int test_run(int argc, char * argv[]) {
     struct TestSuite * suite;
-    struct timeval currentTime;
+    struct timeval t1, t2;
 
     struct TestSuiteIterator * suite_it;
-    long seed;
+    long seed = 0;
+    int opt;
+    int seed_arg = 0;
 
-    gettimeofday(&currentTime, NULL);
-    seed =  currentTime.tv_sec * (int)1e6 + currentTime.tv_usec;
+    while((opt = getopt(argc, argv, "s:")) != -1) {
+        switch (opt) {
+            case 's':
+                seed_arg = 1;
+                seed = atol(optarg);
+                break;
+        }
+    }
+
+    if (!seed_arg) {
+        gettimeofday(&t1, NULL);
+        seed =  t1.tv_sec * (int)1e6 + t1.tv_usec;
+    }
 
     for(suite_it = test_suite_it_make (root);
         !test_suite_it_done (suite_it);
@@ -119,10 +126,14 @@ test_run () {
 
     test_suite_it_destroy(suite_it);
 
-    gettimeofday(&currentTime, NULL);
-    long duration = currentTime.tv_sec * (int)1e6 + currentTime.tv_usec - seed;
+    gettimeofday(&t2, NULL);
+    long elapsed = (t2.tv_sec - t1.tv_sec) * 1e6 + (t2.tv_usec - t1.tv_usec);
 
-    test_report_results(seed, duration);
+    test_report_results(seed, elapsed);
     test_suite_destroy(root);
+    
+    if (number_failed) {
+        return 1;
+    }
     return 0;
 }

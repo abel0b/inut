@@ -1,5 +1,5 @@
-#ifndef TEST_SUITE_H
-#define TEST_SUITE_H
+#ifndef INUT_TEST_SUITE_H
+#define INUT_TEST_SUITE_H
 
 #include "array/array.h"
 
@@ -34,6 +34,9 @@ struct TestCase {
     struct TestResult (*test)();
 };
 
+typedef struct TestResult test;
+
+typedef struct TestSuite * suite;
 
 struct TestSuite * test_suite_resolve(struct TestSuite * suite, char * name);
 

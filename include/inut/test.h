@@ -1,15 +1,15 @@
-#ifndef TEST_H
-#define TEST_H
+#ifndef INUT_TEST_H
+#define INUT_TEST_H
 
 #include "inut/test_suite.h"
 
 #define TEST_ROOT "root"
 
-void test_suite(char * parent, char * name);
+struct TestSuite * test_suite(struct TestSuite * parent, char * name);
 
 int test_case_id_gen();
 
-void test_case(char * parent, char * name, struct TestResult (*test)());
+struct TestCase * test_case(struct TestSuite * parent, char * name, struct TestResult (*test)());
 
 struct TestResult pass();
 
@@ -19,6 +19,6 @@ struct TestResult skip();
 
 struct TestResult todo();
 
-int test_run();
+int test_run(int argc, char * argv[]);
 
 #endif
