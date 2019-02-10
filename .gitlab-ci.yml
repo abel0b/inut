@@ -6,7 +6,7 @@ build:
     stage: build
     before_script:
         - apt update  
-        - apt install cmake
+        - apt install -y cmake
     script:
         - cmake .
         - make
